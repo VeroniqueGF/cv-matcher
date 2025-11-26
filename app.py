@@ -265,8 +265,9 @@ with col2:
 
 # Analysis Button (Centered & Wider)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
-# Use equal columns to ensure perfect centering
-b1, b2, b3 = st.columns([1, 1, 1]) 
+# Use columns to center and size the button. 
+# [1, 3, 1] ratio makes the button occupy 60% of the width (3/5), making it elongated and prominent.
+b1, b2, b3 = st.columns([1, 3, 1]) 
 with b2:
     analyze_button = st.button("Check My CV")
     st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
