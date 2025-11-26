@@ -167,14 +167,222 @@ st.markdown("""
 # ... (rest of the code)
 
 # Trust Section (Updated Class)
+# Sidebar for API Key
+with st.sidebar:
+    st.header("Settings")
+    api_key_input = st.text_input("Gemini API Key", type="password", help="Enter your Google Gemini API Key here if not set in .env")
+
+# Get API Key
+api_key = os.getenv("GOOGLE_API_KEY") or api_key_input
+
+if not api_key:
+    st.warning("⚠️ Please enter your Gemini API Key in the sidebar to proceed.")
+    st.stop()
+
+# Inputs Section (Moved Up)
+st.markdown('<div class="action-card">', unsafe_allow_html=True)
+col1, col2 = st.columns(2)
+
+with col1:
+    uploaded_cv = st.file_uploader("1. Upload PDF", type=["pdf"])
+
+with col2:
+    job_input_type = st.radio("2. Job Details", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
+    
+    if job_input_type == "URL":
+        job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
+        job_text_input = None
+    else:
+        job_text_input = st.text_area("Paste Job Description", height=100, placeholder="Paste the full job description here...", label_visibility="collapsed")
+        job_url = None
+
+# Analysis Button
+if st.button("Get Honest Feedback"):
+    if not uploaded_cv:
+        st.error("Please upload your CV.")
+    elif (job_input_type == "URL" and not job_url) or (job_input_type == "Text" and not job_text_input):
+        st.error("Please provide the job details.")
+    else:
+        with st.spinner("Analysing... (This might take a few seconds)"):
+            # 1. Extract CV Text
+            cv_text = extract_text_from_pdf(uploaded_cv)
+            
+            # 2. Extract Job Text
+            if job_input_type == "URL":
+                job_text = extract_text_from_url(job_url)
+            else:
+                job_text = job_text_input
+                
+            # 3. Analyze
+            result = analyze_cv(cv_text, job_text, api_key)
+            
+            if "error" in result:
+                st.error(f"Analysis failed: {result['error']}")
+            else:
+                # Display Results
+                st.divider()
+                
+                # Top Section: Score & Title
+                c1, c2 = st.columns([1, 2])
+                with c1:
+                    score = result.get('match_score', 0)
+                    score_color = "#28a745" if score >= 80 else "#ffc107" if score >= 50 else "#dc3545"
+                    
+                    # Likelihood Badge
+                    likelihood = result.get('response_likelihood', 'Unknown')
+                    like_color = "#28a745" if likelihood == "High" else "#ffc107" if likelihood == "Moderate" else "#dc3545"
+                    
+                    st.markdown(f"""
+                        <div class="metric-card">
+                            <h2 style="margin:0; color: {score_color}; font-size: 3em;">{score}%</h2>
+                            <p style="margin:0; color: #666; font-weight: 600;">Match Score</p>
+                            <div style="margin-top: 10px; padding: 5px 10px; background-color: {like_color}20; color: {like_color}; border-radius: 20px; display: inline-block; font-weight: bold; font-size: 0.9em;">
+                                {likelihood} Chance
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                with c2:
+                    st.subheader(result.get('job_title', 'Unknown Role'))
+                    st.caption(f"Level: {result.get('job_level', 'Unknown')}")
+                    st.write(f"**{likelihood} chance of a response.** Here's what would move the needle.")
+                    
+                    # Component Scores
+                    st.markdown("##### Score Breakdown")
+                    cs = result.get('component_scores', {})
+                    sc1, sc2, sc3 = st.columns(3)
+                    with sc1:
+                        st.metric("Skills", f"{cs.get('skills', 0)}%")
+                    with sc2:
+                        st.metric("Experience", f"{cs.get('experience', 0)}%")
+                    with sc3:
+                        st.metric("Keywords", f"{cs.get('keywords', 0)}%")
+
+                # Tabs for Deep Dive
+                tab1, tab2, tab3, tab4 = st.tabs(["Priority Fixes", "Gap Analysis", "Impact & Quant", "Ready-to-Use Phrases"])
+                
+                with tab1:
+                    # Priority Fixes
+                    st.subheader("Top Priority Fixes")
+                    st.caption("These 3 changes would have the biggest impact. Focus here first.")
+                    for i, fix in enumerate(result.get('priority_fixes', [])):
+                        st.info(f"**{i+1}.** {fix}")
+                        
+                    st.divider()
+                    
+                    # ATS Keywords Side-by-Side
+                    st.subheader("ATS Keyword Gap Analysis")
+                    st.caption("Missing keywords that actually matter.")
+                    
+                    missing_ats = result.get('ats_keywords', {}).get('missing', [])
+                    
+                    if missing_ats:
+                        st.markdown(f"""
+                        <div style="display: flex; gap: 20px;">
+                            <div style="flex: 1; padding: 15px; background-color: #fff3cd; border-radius: 8px; border-left: 5px solid #ffc107;">
+                                <h4 style="margin-top:0; color: #856404;">⚠️ Missing from CV</h4>
+                                <ul style="padding-left: 20px; color: #856404;">
+                                    {''.join([f'<li>{kw}</li>' for kw in missing_ats])}
+                                </ul>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.success("Great job! No major ATS keywords missing.")
+
+                    # Red Flags
+                    red_flags = result.get('red_flags', [])
+                    if red_flags:
+                        st.divider()
+                        st.subheader("Potential Concerns")
+                        for flag in red_flags:
+                            st.error(flag)
+
+                with tab2:
+                    col_a, col_b = st.columns(2)
+                    with col_a:
+                        st.markdown("### Hard Skills")
+                        if result.get('hard_skills', {}).get('missing', []):
+                            st.markdown("**Missing**")
+                            for skill in result.get('hard_skills', {}).get('missing', []):
+                                st.markdown(f"- <span style='color:#dc3545'>{skill}</span>", unsafe_allow_html=True)
+                        
+                        st.markdown("**Present**")
+                        for skill in result.get('hard_skills', {}).get('present', []):
+                            st.markdown(f"- <span style='color:#28a745'>{skill}</span>", unsafe_allow_html=True)
+                            
+                    with col_b:
+                        st.markdown("### Soft Skills")
+                        if result.get('soft_skills', {}).get('missing', []):
+                            st.markdown("**Missing**")
+                            for skill in result.get('soft_skills', {}).get('missing', []):
+                                st.markdown(f"- <span style='color:#dc3545'>{skill}</span>", unsafe_allow_html=True)
+
+                        st.markdown("**Present**")
+                        for skill in result.get('soft_skills', {}).get('present', []):
+                            st.markdown(f"- <span style='color:#28a745'>{skill}</span>", unsafe_allow_html=True)
+
+                with tab3:
+                    st.subheader("Quantification Score")
+                    st.caption("Recruiters look for numbers to understand the scale of your impact.")
+                    
+                    q_score = result.get('quantification_analysis', {}).get('score', 0)
+                    st.progress(q_score / 100, text=f"{q_score}/100")
+                    
+                    st.markdown("**Analysis:**")
+                    for item in result.get('quantification_analysis', {}).get('feedback', []):
+                        st.info(item)
+
+                with tab4:
+                    st.subheader("Culture Signals")
+                    st.write(result.get('cultural_fit', 'No specific details found.'))
+                    
+                    st.divider()
+                    
+                    st.subheader("Ready-to-Use Phrases")
+                    st.caption("Professional phrasing you can adapt for your CV.")
+                    for phrase in result.get('suggested_phrases', []):
+                        with st.expander(f"{phrase.get('context', 'General')}"):
+                            st.markdown(f"_{phrase.get('suggestion', '')}_")
+
+                # Export Button
+                st.divider()
+                report_text = f"""
+CV Matcher Report
+=================
+Job Title: {result.get('job_title')}
+Match Score: {result.get('match_score')}%
+Response Likelihood: {result.get('response_likelihood')}
+
+---
+PRIORITY FIXES
+{chr(10).join(['- ' + f for f in result.get('priority_fixes', [])])}
+
+---
+ATS MISSING KEYWORDS
+{', '.join(result.get('ats_keywords', {}).get('missing', []))}
+
+---
+SUGGESTED PHRASES
+{chr(10).join([f"- {p.get('context')}: {p.get('suggestion')}" for p in result.get('suggested_phrases', [])])}
+"""
+                st.download_button(
+                    label="📥 Download Report (No Signup Required)",
+                    data=report_text,
+                    file_name="cv_analysis_report.txt",
+                    mime="text/plain",
+                    help="Your report. No watermark. No signup. Just take it."
+                )
+
+# Trust Footer (Integrated)
 st.markdown("""
-    <div class="trust-box" style="margin-top: 50px; padding: 20px; border-radius: 10px; text-align: center;">
-        <h4 style="color: #bfdbfe !important; margin-bottom: 10px;">No tricks. No traps.</h4>
+    <div style="text-align: center; margin-top: 10px; margin-bottom: 30px;">
         <p style="color: #bfdbfe !important; font-size: 0.9em; margin: 0;">
-            No "free trial" that charges you • No signup required • No watermarked downloads • No upsell
+            No "free trial" • No signup required • No watermarks • No upsell
         </p>
     </div>
 """, unsafe_allow_html=True)
+
+st.divider()
 
 # Value Props (3 Columns)
 c1, c2, c3 = st.columns(3)
@@ -407,4 +615,4 @@ SUGGESTED PHRASES
                         </p>
                     </div>
                 """, unsafe_allow_html=True)
-
+```
