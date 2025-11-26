@@ -151,6 +151,28 @@ st.markdown("""
         border: 2px dashed #3b82f6 !important;
         color: #bfdbfe !important;
     }
+
+    /* CUSTOM INPUT BOX STYLING */
+    /* Make File Uploader and Text Input look like equal cards */
+    .upload-box, .job-box {
+        background-color: #1e3a8a;
+        border: 2px solid #3b82f6;
+        border-radius: 16px;
+        padding: 20px;
+        height: 100%; /* Try to force equal height */
+        min-height: 250px;
+    }
+    
+    /* Bigger Labels */
+    .stFileUploader label, .stRadio label, .stTextInput label, .stTextArea label {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        color: #dbeafe !important;
+    }
+    
+    /* Hide default Streamlit input borders since we have a wrapper card? 
+       Actually, let's keep the input styles but ensure the containers align. */
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -387,13 +409,13 @@ st.divider()
 # Value Props (3 Columns)
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown("### 🎯 Real Chances")
+    st.markdown("### Real Chances")
     st.caption("Not just a gamified number. An honest assessment of whether you'll actually hear back.")
 with c2:
-    st.markdown("### 🔍 The 3 Gaps")
+    st.markdown("### The 3 Gaps")
     st.caption("We flag the top 3 things hurting you most, not 47 suggestions you'll never action.")
 with c3:
-    st.markdown("### 🗣️ Actual Phrases")
+    st.markdown("### Actual Phrases")
     st.caption("Copy-pasteable suggestions that sound human, not like a keyword-stuffing bot.")
 
 st.divider()
@@ -412,19 +434,28 @@ if not api_key:
 
 # Inputs
 st.subheader("Check my CV")
+
+# Custom CSS wrapper for equal height columns isn't natively supported in Streamlit easily without components.
+# We will simulate it by styling the inner elements to fill space.
+
 col1, col2 = st.columns(2)
 
 with col1:
-    uploaded_cv = st.file_uploader("1. Upload PDF", type=["pdf"])
+    # We can't easily wrap st elements in a div *and* keep them functional in pure python without components.
+    # But we can style the specific widgets.
+    st.markdown("##### 1. Upload PDF")
+    uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
 
 with col2:
-    job_input_type = st.radio("2. Job Details", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
+    st.markdown("##### 2. Job Details")
+    # Radio horizontal to save vertical space and align
+    job_input_type = st.radio("Job Details", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
     
     if job_input_type == "URL":
         job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
         job_text_input = None
     else:
-        job_text_input = st.text_area("Paste Job Description", height=100, placeholder="Paste the full job description here...", label_visibility="collapsed")
+        job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
         job_url = None
 
 # Analysis Button
