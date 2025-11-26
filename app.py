@@ -466,7 +466,7 @@ with c1:
     # Centered icon above text often looks best for 3-column layouts
     st.image("assets/icon_chances.png", width=80) 
     st.markdown("### Your Real Chances")
-    st.caption("See how likely you are to hear back—and understand why.")
+    st.caption("See how likely you are to hear back and understand why.")
 
 with c2:
     st.image("assets/icon_matters.png", width=80)
