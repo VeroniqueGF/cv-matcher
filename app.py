@@ -152,27 +152,36 @@ st.markdown("""
         color: #bfdbfe !important;
     }
 
-    /* CUSTOM INPUT BOX STYLING */
-    /* Make File Uploader and Text Input look like equal cards */
-    .upload-box, .job-box {
-        background-color: #1e3a8a;
-        border: 2px solid #3b82f6;
-        border-radius: 16px;
-        padding: 20px;
-        height: 100%; /* Try to force equal height */
-        min-height: 250px;
+    /* CUSTOM CONTAINER STYLING (For Input Cards) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #1e3a8a !important;
+        border: 2px solid #3b82f6 !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
     }
     
+    /* Remove default file uploader background to blend in */
+    [data-testid="stFileUploader"] {
+        padding-top: 0;
+    }
+    section[data-testid="stFileUploaderDropzone"] {
+        background-color: #172554 !important; /* Even darker blue for contrast */
+        border: 2px dashed #60a5fa !important;
+        border-radius: 12px;
+    }
+    
+    /* Make text areas blend in */
+    .stTextArea textarea {
+        background-color: #172554 !important;
+        border: 2px solid #3b82f6 !important;
+    }
+
     /* Bigger Labels */
-    .stFileUploader label, .stRadio label, .stTextInput label, .stTextArea label {
+    .stFileUploader label, .stRadio label, .stTextInput label, .stTextArea label, h5 {
         font-size: 1.2rem !important;
         font-weight: 700 !important;
         color: #dbeafe !important;
     }
-    
-    /* Hide default Streamlit input borders since we have a wrapper card? 
-       Actually, let's keep the input styles but ensure the containers align. */
-    
     </style>
     """, unsafe_allow_html=True)
 
@@ -199,34 +208,31 @@ if not api_key:
     st.stop()
 
 # Inputs Section (Moved Up)
-st.markdown('<div class="action-card">', unsafe_allow_html=True)
-
-# Custom CSS wrapper for equal height columns isn't natively supported in Streamlit easily without components.
-# We will simulate it by styling the inner elements to fill space.
+# We use st.container(border=True) to create visual "Cards" for the inputs
 
 col1, col2 = st.columns(2)
 
 with col1:
-    # We can't easily wrap st elements in a div *and* keep them functional in pure python without components.
-    # But we can style the specific widgets.
-    st.markdown("##### 1. Upload PDF")
-    uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
+    with st.container(border=True):
+        st.markdown("##### 1. Upload PDF")
+        uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
 
 with col2:
-    st.markdown("##### 2. Job Spec")
-    # Radio horizontal to save vertical space and align
-    job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
-    
-    if job_input_type == "URL":
-        job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
-        job_text_input = None
-    else:
-        job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
-        job_url = None
+    with st.container(border=True):
+        st.markdown("##### 2. Job Spec")
+        # Radio horizontal to save vertical space and align
+        job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
+        
+        if job_input_type == "URL":
+            job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
+            job_text_input = None
+        else:
+            job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
+            job_url = None
 
-# Analysis Button (Centered)
+# Analysis Button (Centered & Wider)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
-b1, b2, b3 = st.columns([1, 2, 1])
+b1, b2, b3 = st.columns([1, 6, 1]) # Wider middle column for bigger button
 with b2:
     analyze_button = st.button("Check My CV")
 
