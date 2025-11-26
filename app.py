@@ -159,6 +159,10 @@ st.markdown("""
         border-radius: 16px !important;
         padding: 20px !important;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        min-height: 320px; /* Force equal height for both cards */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
     }
     
     /* Hover Effect for Cards */
