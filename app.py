@@ -2,6 +2,7 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 from utils import extract_text_from_pdf, extract_text_from_url, analyze_cv
+import utils
 
 # Load environment variables
 load_dotenv()
@@ -297,6 +298,24 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                 job_text = extract_text_from_url(job_url)
             else:
                 job_text = job_text_input
+                
+            # 3. Analyze
+            if ai_provider == "Gemini (Google)":
+                result = analyze_cv(cv_text, job_text, api_key)
+            else:
+                result = utils.analyze_cv_claude(cv_text, job_text, api_key)
+            
+            if "error" in result:
+                st.error(f"Analysis failed: {result['error']}")
+            else:
+                # Display Results
+                st.divider()
+                
+                # Top Section: Score & Title
+                c1, c2 = st.columns([1, 2])
+                with c1:
+                    score = result.get('match_score', 0)
+                    score_color = "#28a745" if score >= 80 else "#ffc107" if score >= 50 else "#dc3545"
                     
                     # Likelihood Badge
                     likelihood = result.get('response_likelihood', 'Unknown')
