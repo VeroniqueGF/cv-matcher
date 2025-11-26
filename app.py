@@ -265,11 +265,8 @@ with col2:
 
 # Analysis Button (Full Width)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
-# Button is placed directly to span the full width of the container (matching the columns above)
-analyze_button = st.button("Check My CV")
-st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
-
-if analyze_button:
+# Button is placed directly to span the full width of the container
+if st.button("CHECK MY CV", use_container_width=True, type="primary"):
     if not uploaded_cv:
         st.error("Please upload your CV.")
     elif (job_input_type == "URL" and not job_url) or (job_input_type == "Text" and not job_text_input):
