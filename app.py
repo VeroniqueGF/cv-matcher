@@ -461,12 +461,21 @@ st.divider()
 
 # Value Props (3 Columns)
 c1, c2, c3 = st.columns(3)
+
 with c1:
+    # Use columns to put image next to text or just above
+    # User said "next to it or in a way that you suggest would look good"
+    # Centered icon above text often looks best for 3-column layouts
+    st.image("assets/icon_chances.png", width=80) 
     st.markdown("### Your Real Chances")
     st.caption("See how likely you are to hear back—and understand why.")
+
 with c2:
+    st.image("assets/icon_matters.png", width=80)
     st.markdown("### What Matters Most")
     st.caption("The 3 changes that will make the biggest difference, ranked by impact.")
+
 with c3:
+    st.image("assets/icon_phrases.png", width=80)
     st.markdown("### Ready-to-Use Phrases")
     st.caption("Suggestions you can copy straight into your CV. Written like a human, not a robot.")
