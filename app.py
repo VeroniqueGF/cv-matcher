@@ -180,10 +180,11 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 100px auto 0 auto; /* Center vertically relative to cards */
+        margin: 120px auto 0 auto; /* Adjusted top margin for better vertical centering */
         box-shadow: 0 4px 0 #d97706;
         border: 2px solid #fff;
         z-index: 10;
+        position: relative; /* Ensure it respects flow but z-index works */
     }
     
     /* Remove default file uploader background to blend in */
@@ -236,7 +237,8 @@ if not api_key:
 # Inputs Section (Moved Up)
 # We use st.container(border=True) to create visual "Cards" for the inputs
 
-col1, col_mid, col2 = st.columns([1, 0.15, 1])
+# Adjusted column ratios to give more space for the "Next" badge
+col1, col_mid, col2 = st.columns([1, 0.3, 1])
 
 with col1:
     with st.container(border=True):
@@ -263,7 +265,8 @@ with col2:
 
 # Analysis Button (Centered & Wider)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
-b1, b2, b3 = st.columns([1, 6, 1]) # Wider middle column for bigger button
+# Use equal columns to ensure perfect centering
+b1, b2, b3 = st.columns([1, 1, 1]) 
 with b2:
     analyze_button = st.button("Check My CV")
     st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
