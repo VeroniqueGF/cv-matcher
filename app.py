@@ -168,14 +168,14 @@ st.markdown("""
         border-color: #fbbf24 !important; /* Gold border on hover */
     }
     
-    /* VS Badge Styling */
-    .vs-badge {
+    /* Next Badge Styling */
+    .next-badge {
         background-color: #fbbf24;
         color: #92400e;
         font-weight: 900;
-        font-size: 1.5em;
-        width: 50px;
-        height: 50px;
+        font-size: 1.1em;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -245,7 +245,7 @@ with col1:
         st.caption("Limit 200MB per file • PDF")
 
 with col_mid:
-    st.markdown('<div class="vs-badge">VS</div>', unsafe_allow_html=True)
+    st.markdown('<div class="next-badge">Next</div>', unsafe_allow_html=True)
 
 with col2:
     with st.container(border=True):
