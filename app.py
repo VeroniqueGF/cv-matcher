@@ -263,14 +263,11 @@ with col2:
             job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
             job_url = None
 
-# Analysis Button (Centered & Wider)
+# Analysis Button (Full Width)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
-# Use columns to center and size the button. 
-# [1, 3, 1] ratio makes the button occupy 60% of the width (3/5), making it elongated and prominent.
-b1, b2, b3 = st.columns([1, 3, 1]) 
-with b2:
-    analyze_button = st.button("Check My CV")
-    st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
+# Button is placed directly to span the full width of the container (matching the columns above)
+analyze_button = st.button("Check My CV")
+st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
 
 if analyze_button:
     if not uploaded_cv:
