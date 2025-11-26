@@ -458,11 +458,11 @@ st.divider()
 # Value Props (3 Columns)
 c1, c2, c3 = st.columns(3)
 with c1:
-    st.markdown("### Real Chances")
-    st.caption("Not just a gamified number. An honest assessment of whether you'll actually hear back.")
+    st.markdown("### Your Real Chances")
+    st.caption("See how likely you are to hear back—and understand why.")
 with c2:
-    st.markdown("### The 3 Gaps")
-    st.caption("We flag the top 3 things hurting you most, not 47 suggestions you'll never action.")
+    st.markdown("### What Matters Most")
+    st.caption("The 3 changes that will make the biggest difference, ranked by impact.")
 with c3:
-    st.markdown("### Actual Phrases")
-    st.caption("Copy-pasteable suggestions that sound human, not like a keyword-stuffing bot.")
+    st.markdown("### Ready-to-Use Phrases")
+    st.caption("Suggestions you can copy straight into your CV. Written like a human, not a robot.")
