@@ -179,9 +179,9 @@ st.markdown("""
 # Header / Hero Section
 st.markdown("""
     <div style="text-align: center; padding: 40px 0;">
-        <h1 style="font-size: 3em; margin-bottom: 10px; color: white !important;">Stop chasing scores. Start getting interviews.</h1>
+        <h1 style="font-size: 3em; margin-bottom: 10px; color: white !important;">Know where you stand before you apply.</h1>
         <p style="font-size: 1.2em; color: #bfdbfe !important; margin-bottom: 30px;">
-            Honest CV feedback. No games. No subscriptions.
+            Quick, honest feedback to strengthen your application.
         </p>
     </div>
 """, unsafe_allow_html=True)
@@ -213,9 +213,9 @@ with col1:
     uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
 
 with col2:
-    st.markdown("##### 2. Job Details")
+    st.markdown("##### 2. Job Spec")
     # Radio horizontal to save vertical space and align
-    job_input_type = st.radio("Job Details", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
+    job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
     
     if job_input_type == "URL":
         job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
@@ -224,8 +224,13 @@ with col2:
         job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
         job_url = None
 
-# Analysis Button
-if st.button("Get Honest Feedback"):
+# Analysis Button (Centered)
+st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
+b1, b2, b3 = st.columns([1, 2, 1])
+with b2:
+    analyze_button = st.button("Check My CV")
+
+if analyze_button:
     if not uploaded_cv:
         st.error("Please upload your CV.")
     elif (job_input_type == "URL" and not job_url) or (job_input_type == "Text" and not job_text_input):
@@ -405,7 +410,7 @@ SUGGESTED PHRASES
 st.markdown("""
     <div style="text-align: center; margin-top: 10px; margin-bottom: 30px;">
         <p style="color: #bfdbfe !important; font-size: 0.9em; margin: 0;">
-            No "free trial" • No signup required • No watermarks • No upsell
+            Free • No signup • Results in 30 seconds
         </p>
     </div>
 """, unsafe_allow_html=True)
