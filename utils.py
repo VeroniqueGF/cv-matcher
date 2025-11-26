@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import os
+import anthropic
 
 def extract_text_from_pdf(uploaded_file):
     """Extracts text from a PDF file."""
@@ -40,6 +41,63 @@ def extract_text_from_url(url):
     except Exception as e:
         return f"Error fetching URL: {e}"
 
+# Shared Prompts
+SYSTEM_PROMPT = """You are an expert UK Career Coach and Recruiter who knows modern CV writing conventions inside out. 
+Your task is to provide a "Deep Dive" analysis of a candidate's CV against a job listing."""
+
+ANALYSIS_PROMPT_TEMPLATE = """
+**CV Text:**
+{cv_text}
+
+**Job Listing Text:**
+{job_text}
+
+Please analyze the match and provide the output in the following JSON format:
+{{
+    "match_score": "Integer between 0 and 100",
+    "match_explanation": "Short explanation of the score (max 2 sentences)",
+    "response_likelihood": "High, Moderate, or Low",
+    "component_scores": {{
+        "skills": "Integer 0-100",
+        "experience": "Integer 0-100",
+        "keywords": "Integer 0-100"
+    }},
+    "job_title": "Extracted Job Title",
+    "job_level": "Junior, Mid, Senior, Lead, etc.",
+    "ats_keywords": {{
+        "missing": ["List of exact keywords/skills from the job description that are missing from the CV. CRITICAL for ATS."]
+    }},
+    "hard_skills": {{
+        "present": ["List of hard skills found in CV"],
+        "missing": ["List of hard skills required but missing"]
+    }},
+    "soft_skills": {{
+        "present": ["List of soft skills found in CV"],
+        "missing": ["List of soft skills required but missing"]
+    }},
+    "quantification_analysis": {{
+        "score": "Integer 0-100 representing how well achievements are quantified",
+        "feedback": ["Specific bullet points on where numbers/metrics are needed (e.g., 'Sales increased by X%')"]
+    }},
+    "red_flags": ["List of potential red flags (e.g., employment gaps, job hopping, vague dates, formatting issues). Return empty list if none."],
+    "cultural_fit": "Summary of cultural fit based on values mentioned in the listing (or 'Not mentioned' if none found)",
+    "priority_fixes": ["The Top 3 most critical things to fix FIRST to improve the match score."],
+    "suggested_phrases": [
+        {{
+            "context": "Brief context (e.g. 'For the Leadership section')",
+            "suggestion": "Draft text the user can adapt (e.g. 'Spearheaded a cross-functional team of 5...')"
+        }}
+    ]
+}}
+
+**Important Guidelines:**
+- Use British English spelling.
+- **ATS Focus**: Be ruthless about missing keywords.
+- **Quantification**: Look for numbers, percentages, and $ amounts. If missing, flag it.
+- **Tone**: Professional, constructive, but direct. Don't sugarcoat red flags.
+- If the CV or Job text is too short or invalid, return a JSON with a score of 0 and an explanation of the error.
+"""
+
 def analyze_cv(cv_text, job_text, api_key):
     """Analyzes CV against Job Description using Gemini API."""
     
@@ -54,63 +112,8 @@ def analyze_cv(cv_text, job_text, api_key):
         "response_mime_type": "application/json",
     }
     
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash", generation_config=generation_config)
-
-    prompt = f"""
-    You are an expert UK Career Coach and Recruiter who knows modern CV writing conventions inside out. 
-    Your task is to provide a "Deep Dive" analysis of a candidate's CV against a job listing.
-    
-    **CV Text:**
-    {cv_text}
-    
-    **Job Listing Text:**
-    {job_text}
-    
-    Please analyze the match and provide the output in the following JSON format:
-    {{
-        "match_score": "Integer between 0 and 100",
-        "match_explanation": "Short explanation of the score (max 2 sentences)",
-        "response_likelihood": "High, Moderate, or Low",
-        "component_scores": {{
-            "skills": "Integer 0-100",
-            "experience": "Integer 0-100",
-            "keywords": "Integer 0-100"
-        }},
-        "job_title": "Extracted Job Title",
-        "job_level": "Junior, Mid, Senior, Lead, etc.",
-        "ats_keywords": {{
-            "missing": ["List of exact keywords/skills from the job description that are missing from the CV. CRITICAL for ATS."]
-        }},
-        "hard_skills": {{
-            "present": ["List of hard skills found in CV"],
-            "missing": ["List of hard skills required but missing"]
-        }},
-        "soft_skills": {{
-            "present": ["List of soft skills found in CV"],
-            "missing": ["List of soft skills required but missing"]
-        }},
-        "quantification_analysis": {{
-            "score": "Integer 0-100 representing how well achievements are quantified",
-            "feedback": ["Specific bullet points on where numbers/metrics are needed (e.g., 'Sales increased by X%')"]
-        }},
-        "red_flags": ["List of potential red flags (e.g., employment gaps, job hopping, vague dates, formatting issues). Return empty list if none."],
-        "cultural_fit": "Summary of cultural fit based on values mentioned in the listing (or 'Not mentioned' if none found)",
-        "priority_fixes": ["The Top 3 most critical things to fix FIRST to improve the match score."],
-        "suggested_phrases": [
-            {{
-                "context": "Brief context (e.g. 'For the Leadership section')",
-                "suggestion": "Draft text the user can adapt (e.g. 'Spearheaded a cross-functional team of 5...')"
-            }}
-        ]
-    }}
-    
-    **Important Guidelines:**
-    - Use British English spelling.
-    - **ATS Focus**: Be ruthless about missing keywords.
-    - **Quantification**: Look for numbers, percentages, and $ amounts. If missing, flag it.
-    - **Tone**: Professional, constructive, but direct. Don't sugarcoat red flags.
-    - If the CV or Job text is too short or invalid, return a JSON with a score of 0 and an explanation of the error.
-    """
+    # Construct the full prompt
+    full_prompt = f"{SYSTEM_PROMPT}\n\n{ANALYSIS_PROMPT_TEMPLATE.format(cv_text=cv_text, job_text=job_text)}"
 
     # Define preferred models in order of priority (Flash models first for speed/cost)
     preferred_models = [
@@ -136,11 +139,6 @@ def analyze_cv(cv_text, job_text, api_key):
         # If list_models fails, we'll just rely on the preferred list
         pass
 
-    # Build a comprehensive list of candidates to try
-    # 1. Preferred models that are confirmed available
-    # 2. Preferred models that might be available (if list_models failed or missed them)
-    # 3. Any other available models (as a last resort)
-    
     candidates = []
     
     # Add preferred models first
@@ -158,13 +156,45 @@ def analyze_cv(cv_text, job_text, api_key):
     for model_name in candidates:
         try:
             model = genai.GenerativeModel(model_name=model_name, generation_config=generation_config)
-            response = model.generate_content(prompt)
+            response = model.generate_content(full_prompt)
             return json.loads(response.text)
         except Exception as e:
             last_error = e
-            # If it's a rate limit (429) or not found (404), we continue to the next model.
-            # We print the error to console for debugging but don't stop.
             print(f"Model {model_name} failed: {e}")
             continue
             
     return {"error": f"All models failed. Please check your API key and Quota. Last error: {str(last_error)}"}
+
+def analyze_cv_claude(cv_text, job_text, api_key):
+    """Analyzes CV against Job Description using Anthropic Claude API."""
+    
+    client = anthropic.Anthropic(api_key=api_key)
+    user_message = ANALYSIS_PROMPT_TEMPLATE.format(cv_text=cv_text, job_text=job_text)
+    
+    try:
+        message = client.messages.create(
+            model="claude-3-5-sonnet-20240620",
+            max_tokens=4096,
+            temperature=0.7,
+            system=SYSTEM_PROMPT,
+            messages=[
+                {"role": "user", "content": user_message}
+            ]
+        )
+        
+        # Extract JSON from response
+        content = message.content[0].text
+        
+        # Find JSON start/end in case of extra text
+        start = content.find('{')
+        end = content.rfind('}') + 1
+        
+        if start != -1 and end != -1:
+            json_str = content[start:end]
+            return json.loads(json_str)
+        else:
+            # Fallback: try to parse the whole thing if curly braces aren't found (unlikely)
+            return json.loads(content)
+            
+    except Exception as e:
+        return {"error": f"Claude API Error: {e}"}

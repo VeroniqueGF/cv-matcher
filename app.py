@@ -226,17 +226,29 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Sidebar for API Key
+# Sidebar for Settings
 with st.sidebar:
     st.header("Settings")
-    api_key_input = st.text_input("Gemini API Key", type="password", help="Enter your Google Gemini API Key here if not set in .env")
+    
+    # AI Provider Selection
+    ai_provider = st.selectbox("AI Model", ["Gemini (Google)", "Claude (Anthropic)"], index=0)
+    
+    api_key = None
+    
+    if ai_provider == "Gemini (Google)":
+        api_key_input = st.text_input("Gemini API Key", type="password", help="Enter your Google Gemini API Key")
+        api_key = os.getenv("GOOGLE_API_KEY") or api_key_input
+        if not api_key:
+            st.warning("⚠️ Please enter your Gemini API Key.")
+            
+    elif ai_provider == "Claude (Anthropic)":
+        claude_key_input = st.text_input("Anthropic API Key", type="password", help="Enter your Anthropic API Key")
+        api_key = os.getenv("ANTHROPIC_API_KEY") or claude_key_input
+        if not api_key:
+            st.warning("⚠️ Please enter your Anthropic API Key.")
 
-# Get API Key
-api_key = os.getenv("GOOGLE_API_KEY") or api_key_input
-
-if not api_key:
-    st.warning("⚠️ Please enter your Gemini API Key in the sidebar to proceed.")
-    st.stop()
+    st.markdown("---")
+    st.markdown("Created by Antigravity")
 
 # Inputs Section (Moved Up)
 # We use st.container(border=True) to create visual "Cards" for the inputs
@@ -285,21 +297,6 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                 job_text = extract_text_from_url(job_url)
             else:
                 job_text = job_text_input
-                
-            # 3. Analyze
-            result = analyze_cv(cv_text, job_text, api_key)
-            
-            if "error" in result:
-                st.error(f"Analysis failed: {result['error']}")
-            else:
-                # Display Results
-                st.divider()
-                
-                # Top Section: Score & Title
-                c1, c2 = st.columns([1, 2])
-                with c1:
-                    score = result.get('match_score', 0)
-                    score_color = "#28a745" if score >= 80 else "#ffc107" if score >= 50 else "#dc3545"
                     
                     # Likelihood Badge
                     likelihood = result.get('response_likelihood', 'Unknown')
