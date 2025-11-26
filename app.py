@@ -158,6 +158,32 @@ st.markdown("""
         border: 2px solid #3b82f6 !important;
         border-radius: 16px !important;
         padding: 20px !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    /* Hover Effect for Cards */
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        border-color: #fbbf24 !important; /* Gold border on hover */
+    }
+    
+    /* VS Badge Styling */
+    .vs-badge {
+        background-color: #fbbf24;
+        color: #92400e;
+        font-weight: 900;
+        font-size: 1.5em;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 100px auto 0 auto; /* Center vertically relative to cards */
+        box-shadow: 0 4px 0 #d97706;
+        border: 2px solid #fff;
+        z-index: 10;
     }
     
     /* Remove default file uploader background to blend in */
@@ -210,21 +236,26 @@ if not api_key:
 # Inputs Section (Moved Up)
 # We use st.container(border=True) to create visual "Cards" for the inputs
 
-col1, col2 = st.columns(2)
+col1, col_mid, col2 = st.columns([1, 0.15, 1])
 
 with col1:
     with st.container(border=True):
-        st.markdown("##### 1. Upload PDF")
+        st.markdown("##### 📄 Your CV")
         uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
+        st.caption("Limit 200MB per file • PDF")
+
+with col_mid:
+    st.markdown('<div class="vs-badge">VS</div>', unsafe_allow_html=True)
 
 with col2:
     with st.container(border=True):
-        st.markdown("##### 2. Job Spec")
+        st.markdown("##### 🎯 Job Spec")
         # Radio horizontal to save vertical space and align
         job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
         
         if job_input_type == "URL":
             job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
+            st.caption("Works with LinkedIn, Indeed, and most job sites.")
             job_text_input = None
         else:
             job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
@@ -235,6 +266,7 @@ st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
 b1, b2, b3 = st.columns([1, 6, 1]) # Wider middle column for bigger button
 with b2:
     analyze_button = st.button("Check My CV")
+    st.markdown("<p style='text-align: center; color: #94a3b8 !important; margin-top: 10px; font-size: 0.9em;'>See your match score, top gaps, and how to fix them.</p>", unsafe_allow_html=True)
 
 if analyze_button:
     if not uploaded_cv:
