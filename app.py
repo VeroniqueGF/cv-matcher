@@ -165,6 +165,19 @@ st.markdown("""
         flex-direction: column;
         justify-content: flex-start;
     }
+
+    /* Force Equal Height Columns (User Provided) */
+    [data-testid="column"] {
+        min-height: 300px;
+    }
+    
+    [data-testid="column"] > div:first-child {
+        height: 100%;
+    }
+    
+    [data-testid="stVerticalBlock"] {
+        height: 100%;
+    }
     
     /* Hover Effect for Cards */
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
