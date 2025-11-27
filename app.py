@@ -268,14 +268,17 @@ with st.sidebar:
 col1, col2 = st.columns(2)
 
 with col1:
+    st.markdown('<div class="equal-height">', unsafe_allow_html=True)
     st.markdown("#### 📄 Your CV")
     uploaded_cv = st.file_uploader(
         "Drag and drop file here",
         type=["pdf"],
         help="Limit 200MB per file • PDF"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
+    st.markdown('<div class="equal-height">', unsafe_allow_html=True)
     st.markdown("#### 🎯 Job Spec")
     job_input_type = st.radio("", ["URL", "Text"], horizontal=True)
     
@@ -288,6 +291,7 @@ with col2:
         job_url = None
         
     st.markdown("<br>", unsafe_allow_html=True)  # Add spacing to match height
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Analysis Button (Full Width)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
