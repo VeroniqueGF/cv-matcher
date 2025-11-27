@@ -18,11 +18,11 @@ st.set_page_config(
 # Custom CSS for "Pierre-Louis" Playful Dashboard Look
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap');
     
     /* GLOBAL STYLES */
     html, body, [class*="css"]  {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Manrope', sans-serif;
         color: #ffffff !important;
     }
     
