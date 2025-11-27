@@ -199,21 +199,49 @@ st.markdown("""
     
     /* Next Badge Styling */
     .next-badge {
-        background-color: #fbbf24;
-        color: #92400e;
-        font-weight: 900;
-        font-size: 1.1em;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 120px auto 0 auto; /* Adjusted top margin for better vertical centering */
-        box-shadow: 0 4px 0 #d97706;
-        border: 2px solid #fff;
-        z-index: 10;
-        position: relative; /* Ensure it respects flow but z-index works */
+        background-color: #F5A623;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 50px; /* Vertically center relative to inputs */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Notepad Style for ATS Keywords */
+    .notepad-container {
+        background-color: #fef9c3; /* Light yellow */
+        border: 1px solid #eab308;
+        border-radius: 8px;
+        padding: 20px;
+        position: relative;
+        box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+        font-family: 'Courier New', Courier, monospace; /* Typewriter/Handwritten feel */
+    }
+    
+    .notepad-header {
+        color: #b45309;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #eab308;
+        padding-bottom: 5px;
+    }
+
+    .teacher-note {
+        font-family: 'Brush Script MT', cursive;
+        color: #dc2626; /* Red pen color */
+        font-size: 1.5em;
+        transform: rotate(-5deg);
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: white;
+        padding: 5px 10px;
+        border: 1px solid #dc2626;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
     
     /* Remove default file uploader background to blend in */
@@ -390,13 +418,12 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                     
                     if missing_ats:
                         st.markdown(f"""
-                        <div style="display: flex; gap: 20px;">
-                            <div style="flex: 1; padding: 15px; background-color: #fff3cd; border-radius: 8px; border-left: 5px solid #ffc107;">
-                                <h4 style="margin-top:0; color: #856404;">⚠️ Missing from CV</h4>
-                                <ul style="padding-left: 20px; color: #856404;">
-                                    {''.join([f'<li>{kw}</li>' for kw in missing_ats])}
-                                </ul>
-                            </div>
+                        <div class="notepad-container">
+                            <div class="teacher-note">Pay attention to these!</div>
+                            <div class="notepad-header">⚠️ Missing from CV</div>
+                            <ul style="color: #4b5563; list-style-type: circle; padding-left: 20px;">
+                                {''.join([f'<li style="margin-bottom: 5px;">{kw}</li>' for kw in missing_ats])}
+                            </ul>
                         </div>
                         """, unsafe_allow_html=True)
                     else:
