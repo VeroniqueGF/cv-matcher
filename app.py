@@ -181,9 +181,20 @@ st.markdown("""
     
     /* Hover Effect for Cards */
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-        border-color: #fbbf24 !important; /* Gold border on hover */
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        border-color: #60a5fa !important;
+    }
+    
+    /* Full Width Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        width: 100%;
+    }
+
+    .stTabs [data-baseweb="tab-list"] button {
+        flex-grow: 1;
+        text-align: center;
     }
     
     /* Next Badge Styling */
@@ -360,7 +371,7 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                         st.metric("Keywords", f"{cs.get('keywords', 0)}%")
 
                 # Tabs for Deep Dive
-                tab1, tab2, tab3, tab4 = st.tabs(["Priority Fixes", "Gap Analysis", "Impact & Quant", "Ready-to-Use Phrases"])
+                tab1, tab2, tab3, tab4 = st.tabs(["Priority Fixes", "Gap Analysis", "Impact", "Ready-to-Use Phrases"])
                 
                 with tab1:
                     # Priority Fixes
