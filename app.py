@@ -422,7 +422,7 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                             <div class="teacher-note">Pay attention to these!</div>
                             <div class="notepad-header">⚠️ Missing from CV</div>
                             <ul style="color: #4b5563; list-style-type: circle; padding-left: 20px;">
-                                {''.join([f'<li style="margin-bottom: 5px;">{kw}</li>' for kw in missing_ats])}
+                                {''.join([f'<li style="margin-bottom: 5px;">{kw.capitalize()}</li>' for kw in missing_ats])}
                             </ul>
                         </div>
                         """, unsafe_allow_html=True)

@@ -174,7 +174,7 @@ Please analyze the match and provide the output in the following JSON format:
     }},
     "quantification_analysis": {{
         "score": "Integer 0-100 representing how well achievements are quantified",
-        "feedback": ["Specific bullet points on where numbers/metrics are needed (e.g., 'Sales increased by X%')"]
+        "feedback": ["List 3 specific ways to strengthen the CV's impact, even if the score is high. Focus on adding metrics or stronger verbs."]
     }},
     "red_flags": ["List of potential red flags (e.g., employment gaps, job hopping, vague dates, formatting issues). Return empty list if none."],
     "cultural_fit": "Summary of cultural fit based on values mentioned in the listing (or 'Not mentioned' if none found)",
@@ -189,6 +189,7 @@ Please analyze the match and provide the output in the following JSON format:
 
 **Important Guidelines:**
 - Use British English spelling.
+- **Capitalization**: Ensure ALL bullet points (keywords, fixes, feedback) start with a Capital letter.
 - **ATS Focus**: Be ruthless about missing keywords.
 - **Quantification**: Look for numbers, percentages, and $ amounts. If missing, flag it.
 - **Tone**: Professional, constructive, but direct. Don't sugarcoat red flags.
