@@ -127,6 +127,9 @@ Identify potential concerns:
 - Inconsistent dates or overlapping roles
 - Buzzword stuffing without substance
 - No career progression over extended period (5+ years same level)
+- CV Length: Too long (over 3 pages) or too short (under 1 page for experienced)
+- Formatting: Unprofessional fonts, clutter, or photos (if not standard for region)
+- Generic: "Responsible for" without achievements
 
 ---
 

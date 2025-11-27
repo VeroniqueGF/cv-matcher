@@ -429,13 +429,23 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                     else:
                         st.success("Great job! No major ATS keywords missing.")
 
-                    # Red Flags
+                    # Red Flags Section (Enhanced)
                     red_flags = result.get('red_flags', [])
                     if red_flags:
-                        st.divider()
-                        st.subheader("Potential Concerns")
-                        for flag in red_flags:
-                            st.error(flag)
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.markdown("""
+                        <div style="background-color: #fee2e2; border: 1px solid #ef4444; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <h3 style="color: #b91c1c; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                                🚩 Recruiter Red Flags
+                            </h3>
+                            <p style="color: #7f1d1d; font-size: 0.9em; margin-bottom: 15px;">
+                                These are common warning signs that might cause a recruiter to hesitate.
+                            </p>
+                            <ul style="color: #991b1b; padding-left: 20px;">
+                        """ + "".join([f"<li style='margin-bottom: 8px;'>{flag}</li>" for flag in red_flags]) + """
+                            </ul>
+                        </div>
+                        """, unsafe_allow_html=True)
 
                 with tab2:
                     col_a, col_b = st.columns(2)
