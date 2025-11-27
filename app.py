@@ -399,7 +399,7 @@ if st.button("CHECK MY CV", use_container_width=True, type="primary"):
                         st.metric("Keywords", f"{cs.get('keywords', 0)}%")
 
                 # Tabs for Deep Dive
-                tab1, tab2, tab3, tab4 = st.tabs(["Priority Fixes", "Gap Analysis", "Impact", "Ready-to-Use Phrases"])
+                tab1, tab2, tab3, tab4 = st.tabs(["What to Fix First", "What's Missing", "Strengthen These", "Copy-Paste Phrases"])
                 
                 with tab1:
                     # Priority Fixes
