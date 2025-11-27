@@ -491,18 +491,40 @@ c1, c2, c3 = st.columns(3)
 
 with c1:
     # Use columns to put image next to text or just above
-    # User said "next to it or in a way that you suggest would look good"
-    # Centered icon above text often looks best for 3-column layouts
-    st.image("assets/icon_chances.png", width=80) 
-    st.markdown("### Your Real Chances")
-    st.caption("See how likely you are to hear back and understand why.")
+    # Feature section with numbers
+st.markdown("<br><br>", unsafe_allow_html=True)
 
-with c2:
-    st.image("assets/icon_matters.png", width=80)
-    st.markdown("### What Matters Most")
-    st.caption("The 3 changes that will make the biggest difference, ranked by impact.")
+col1, col2, col3 = st.columns(3)
 
-with c3:
-    st.image("assets/icon_phrases.png", width=80)
-    st.markdown("### Ready-to-Use Phrases")
-    st.caption("Suggestions you can copy straight into your CV. Written like a human, not a robot.")
+with col1:
+    st.markdown("""
+        <div style="text-align: left;">
+            <p style="font-size: 48px; font-weight: bold; color: #F5A623; margin: 0; line-height: 1;">1</p>
+            <h3 style="margin: 16px 0 8px 0; color: white;">Your Real Chances</h3>
+            <p style="color: #888; font-size: 14px; line-height: 1.5;">
+                See how likely you are to hear back—and understand why.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown("""
+        <div style="text-align: left;">
+            <p style="font-size: 48px; font-weight: bold; color: #F5A623; margin: 0; line-height: 1;">2</p>
+            <h3 style="margin: 16px 0 8px 0; color: white;">What Matters Most</h3>
+            <p style="color: #888; font-size: 14px; line-height: 1.5;">
+                The 3 changes that will make the biggest difference, ranked by impact.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+        <div style="text-align: left;">
+            <p style="font-size: 48px; font-weight: bold; color: #F5A623; margin: 0; line-height: 1;">3</p>
+            <h3 style="margin: 16px 0 8px 0; color: white;">Ready-to-Use Phrases</h3>
+            <p style="color: #888; font-size: 14px; line-height: 1.5;">
+                Suggestions you can copy straight into your CV. Written like a human, not a robot.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
