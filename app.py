@@ -259,7 +259,7 @@ col1, col_mid, col2 = st.columns([1, 0.3, 1])
 
 with col1:
     with st.container(border=True):
-        st.markdown("##### 📄 Your CV")
+        st.markdown("##### Your CV")
         uploaded_cv = st.file_uploader("Upload PDF", type=["pdf"], label_visibility="collapsed")
         st.caption("Limit 200MB per file • PDF")
 
@@ -268,7 +268,7 @@ with col_mid:
 
 with col2:
     with st.container(border=True):
-        st.markdown("##### 🎯 Job Spec")
+        st.markdown("##### Job Spec")
         # Radio horizontal to save vertical space and align
         job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
         
