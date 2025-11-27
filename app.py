@@ -10,7 +10,7 @@ load_dotenv()
 # Page Config
 st.set_page_config(
     page_title="CV Matcher",
-    page_icon="🎯",
+    page_icon="assets/logo.png",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
