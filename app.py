@@ -264,34 +264,34 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("Created by Antigravity")
 
-# Inputs Section (Simplified)
-col1, col2 = st.columns(2)
+# Inputs Section (Restored "Next" Badge Layout)
+# Adjusted column ratios to give more space for the "Next" badge
+col1, col_mid, col2 = st.columns([1, 0.3, 1])
 
 with col1:
-    st.markdown('<div class="equal-height">', unsafe_allow_html=True)
-    st.markdown("#### 📄 Your CV")
-    uploaded_cv = st.file_uploader(
-        "Drag and drop file here",
-        type=["pdf"],
-        help="Limit 200MB per file • PDF"
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown("#### Your CV")
+        uploaded_cv = st.file_uploader(
+            "Drag and drop file here",
+            type=["pdf"],
+            help="Limit 200MB per file • PDF"
+        )
+
+with col_mid:
+    st.markdown('<div class="next-badge">Next</div>', unsafe_allow_html=True)
 
 with col2:
-    st.markdown('<div class="equal-height">', unsafe_allow_html=True)
-    st.markdown("#### 🎯 Job Spec")
-    job_input_type = st.radio("", ["URL", "Text"], horizontal=True)
-    
-    if job_input_type == "URL":
-        job_url = st.text_input("", placeholder="https://linkedin.com/jobs/...")
-        st.caption("Works with LinkedIn, Indeed, and most job sites.")
-        job_text_input = None
-    else:
-        job_text_input = st.text_area("", height=150, placeholder="Paste description...")
-        job_url = None
+    with st.container(border=True):
+        st.markdown("#### Job Spec")
+        job_input_type = st.radio("Job Spec", ["URL", "Text"], horizontal=True, label_visibility="collapsed")
         
-    st.markdown("<br>", unsafe_allow_html=True)  # Add spacing to match height
-    st.markdown('</div>', unsafe_allow_html=True)
+        if job_input_type == "URL":
+            job_url = st.text_input("Paste Job URL", placeholder="https://linkedin.com/jobs/...", label_visibility="collapsed")
+            st.caption("Works with LinkedIn, Indeed, and most job sites.")
+            job_text_input = None
+        else:
+            job_text_input = st.text_area("Paste Job Description", height=150, placeholder="Paste description...", label_visibility="collapsed")
+            job_url = None
 
 # Analysis Button (Full Width)
 st.markdown("<br>", unsafe_allow_html=True) # Add some spacing
