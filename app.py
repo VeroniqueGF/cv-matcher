@@ -487,11 +487,7 @@ st.markdown("""
 st.divider()
 
 # Value Props (3 Columns)
-c1, c2, c3 = st.columns(3)
-
-with c1:
-    # Use columns to put image next to text or just above
-    # Feature section with numbers
+# Feature section with numbers
 st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
